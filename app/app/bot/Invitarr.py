@@ -53,7 +53,7 @@ def plexadd(plexname):
         print(e)
         return False
     else:
-        print(plexname +' has been added to plex (☞ຈل͜ຈ)☞')
+        print(plexname +' has been added to Plex.')
         return True
 
 
@@ -64,47 +64,46 @@ def plexremove(plexname):
         print(e)
         return False
     else:
-        print(plexname +' has been removed from plex (☞ຈل͜ຈ)☞')
+        print(plexname +' has been removed from Plex.')
         return True
 
 class MyClient(discord.Client):
     async def on_ready(self):
-        print('Made by Sleepingpirate https://github.com/Sleepingpirates/')
+        print('Built by Sleepingpirate https://github.com/Sleepingpirates/')
         print('Logged in as')
         print(self.user.name)
         print(self.user.id)
         print('------')
-        await client.change_presence(activity=discord.Game(name="Admins can do -help"))
 
     async def on_member_update(self, before, after):
         secure = client.get_channel(chan)
         for role_for_plex in roleid:
             role = after.guild.get_role(int(role_for_plex))
             if (role in after.roles and role not in before.roles):
-                await after.send('Welcome To '+ PLEX_SERVER_NAME +'. Just reply with your email so we can add you to Plex!')
-                await after.send('I will wait 10 minutes for your message, if you do not send it by then I will cancel the command.')
+                await after.send("Welcome to Neptune! 🔱  Reply to this message with the email linked to your Plex account and I'll send you an invite.")
+                await after.send("If I don't hear from you in 10 minutes, I'll cancel this request.")
                 def check(m):
                     return m.author == after and not m.guild
                 try:
                     email = await client.wait_for('message', timeout=600, check=check)
                 except asyncio.TimeoutError:
-                    await after.send('Timed Out. Message Server Admin So They Can Add You Manually.')
+                    await after.send("Time's up! ⏰ Contact the admin to have them add you manually.")
                     return
                 else:
                     await asyncio.sleep(5)
-                    await after.send('Got it we will be processing your email shortly')
+                    await after.send("Thanks! You'll get an email with your invitation soon. 💌")
                     print(email.content) #make it go to a log channel
                     plexname = str(email.content)
                     if plexadd(plexname):
                         if auto_remove_user:
                             db.save_user(str(after.id), email.content)
                         await asyncio.sleep(20)
-                        await after.send('You have Been Added To Plex!')
+                        await after.send("You're in! 🎉 Enjoy your time with Neptune and let us know if you have any questions.")
                         await secure.send(plexname + ' ' + after.mention + ' was added to plex')
                     else:
-                        await after.send('There was an error adding this email address. Message Server Admin.')
+                        await after.send('There was an error adding this email address. Message the admin for help.')
                     return
-            
+
             elif(role not in after.roles and role in before.roles):
                 if auto_remove_user:
                     try:
@@ -123,7 +122,7 @@ class MyClient(discord.Client):
 
     async def on_message(self, message):
         secure = client.get_channel(chan)
-        
+
         if message.author.id == self.user.id:
             return
 
@@ -148,7 +147,7 @@ class MyClient(discord.Client):
                    mgs = mgs.split(' ')
                    email = mgs[0]
                    if(plexadd(email)):
-                     await message.channel.send('User has been added to plex.')   
+                     await message.channel.send('User has been added to plex.')
                    else:
                      await message.channel.send('Error adding email to plex. Ignore this if the email already exist in plex.')
 
@@ -173,7 +172,7 @@ class MyClient(discord.Client):
                 table.set_cols_align(["c", "c", "c"])
                 header = ("#", "Name", "Email")
                 table.add_row(header)
-        
+
                 for index, peoples in enumerate(all):
                     index = index + 1
                     id = int(peoples[1])
@@ -186,7 +185,7 @@ class MyClient(discord.Client):
                     embed.add_field(name=f"**{index}. {username}**", value=dbemail+'\n', inline=False)
                     table.add_row((index, username, dbemail))
 
-                
+
                 if message.content.startswith('-db ls'):
                     total = str(len(all))
                     if(len(all)>25):
@@ -196,8 +195,8 @@ class MyClient(discord.Client):
                         await message.channel.send("Database too large! Total: {total}".format(total = total),file=discord.File('db.txt'))
                     else:
                         await message.channel.send(embed = embed)
-                    
-                        
+
+
                 else:
                     try:
                         position = message.content.replace("-db rm", "")
